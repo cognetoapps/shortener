@@ -58,6 +58,11 @@ class Shortener::ShortenedUrl < ActiveRecord::Base
     end
   end
 
+  def self.generate_unique_key(length = ::Shortener.unique_key_length)
+    charset = ::Shortener.key_chars
+    (0...length).map { charset[rand(charset.size)] }.join
+  end
+
   def self.extract_token(token_str)
     # only use the leading valid characters
     # escape to ensure custom charsets with protected chars do not fail
@@ -141,8 +146,6 @@ class Shortener::ShortenedUrl < ActiveRecord::Base
   end
 
   def generate_unique_key
-    charset = ::Shortener.key_chars
-    (0...::Shortener.unique_key_length).map{ charset[rand(charset.size)] }.join
+    self.class.generate_unique_key
   end
-
 end
